@@ -88,7 +88,6 @@ namespace chess
             timer1.Interval = 1000;
             listView1.Columns.Add("Nume aplicatie", -2);
             fill();
-            //    stergere_init();
             listView1.ForeColor = Color.DimGray;
             timer2.Interval = 10;
             loop.Tick += Loop_Tick;
@@ -1278,6 +1277,8 @@ namespace chess
                     fill();
                     fillista();
                     fillProcessList();
+                    Process[] pvar = Process.GetProcesses();
+                    pos = (from p in pvar join y in processList on p.ProcessName equals y select processList.IndexOf(y)).ToList();
                     listView1.Invalidate();
                 }
             }
