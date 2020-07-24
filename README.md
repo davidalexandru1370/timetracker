@@ -1,2 +1,4 @@
 # timetracker ->
  Este o aplicatie care contorizeaza timpul petrecut intr-o aplicatie pentru a-ti masura activitatea. Aplicatia ofera posibilitatea de a primi notificari, de a fi pornita deodata cu windows-ul, intr-un sistem tray (aplicatia va aparea in taskbar, in partea dreapta la icoane), consumand resurse putine, intre 10-20 mb RAM. In functiile de aplicatiile pe care le-ati adaugat, la fiecare minut aplicatia va scana procesele din RAM si cele din aplicatie, iar astfel minutele/orele sunt contorizate. Daca atunci cand adaugati vreo aplicatie in lista, aceasta nu apare cu verde, ori nu este in RAM, ori nu a trecut 1 minut. Doar aplicatiile de tip .exe sunt acceptate! Sistemul de notificari nu trimite notificari daca aplicatia principala este in fundal, trebuie sa fie minimized, sau nu aiba focus. 
+ 
+ Aceasta se poate porni din bin/debug/chess.exe .
