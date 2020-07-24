@@ -1,0 +1,5 @@
+﻿CREATE TABLE [dbo].[Folder]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [Path] VARCHAR(MAX) NULL
+)
