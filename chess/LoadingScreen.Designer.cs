@@ -39,6 +39,7 @@
             this.slidingLines1.numbOfLines = 5;
             this.slidingLines1.Size = new System.Drawing.Size(136, 236);
             this.slidingLines1.TabIndex = 0;
+            this.slidingLines1.Paint += new System.Windows.Forms.PaintEventHandler(this.slidingLines1_Paint);
             // 
             // LoadingScreen
             // 
@@ -53,7 +54,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "LoadingScreen";
-            this.Text = "LoadingScreen";
+            this.Text = "TimeTracker";
             this.Load += new System.EventHandler(this.LoadingScreen_Load);
             this.ResumeLayout(false);
 

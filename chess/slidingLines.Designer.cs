@@ -37,7 +37,7 @@
             this.Name = "slidingLines";
             this.Size = new System.Drawing.Size(273, 90);
             this.Load += new System.EventHandler(this.slidingLines_Load);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.slidingLines_Paint);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.slidingLines_Paint_1);
             this.ResumeLayout(false);
 
         }

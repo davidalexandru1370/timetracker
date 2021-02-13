@@ -16,7 +16,7 @@ namespace chess
     {
         private GraphicsPath template = new GraphicsPath();
         public List<GraphicsPath> lines = new List<GraphicsPath>();
-
+        private Timer animationTick = new Timer();
         [Range(1, 10, ErrorMessage = "Invalid input!"), Browsable(true), EditorBrowsable(EditorBrowsableState.Always), Category("Appearance")]
         public int numbOfLines
         {
@@ -29,7 +29,6 @@ namespace chess
                 _numbOfLines = value;
             }
         }
-
 
         private int _numbOfLines = 1;
         [Browsable(true), EditorBrowsable(EditorBrowsableState.Always), Description("Distance between 2 lines on the X-axis"), Category("Appearance")]
@@ -60,6 +59,8 @@ namespace chess
         //    }
         //}
 
+        private int direction, amount; //animation variables 
+        private Graphics g;
         public slidingLines()
         {
             InitializeComponent();
@@ -68,15 +69,83 @@ namespace chess
         private void slidingLines_Load(object sender, EventArgs e)
         {
             generateLines();
+            animationTick.Tick += AnimationTick_Tick;
         }
 
-        //private void initializeLine()
+        private void draw()
+        {
+            foreach (GraphicsPath line in lines)
+            {
+                g.FillPath(new SolidBrush(Color.FromArgb(236, 23, 247)), line);
+            }
+        }
+
+        //protected override void OnPaint(PaintEventArgs e)
         //{
-        //    template.StartFigure();
-        //    template.AddRectangle(new Rectangle(5, this.Height - 10, 10, 10));
-        //    template.CloseFigure();
-        //    lines.Add(template);
+        //    base.OnPaint(e);
+        //    g = e.Graphics;
+        //    g.SmoothingMode = SmoothingMode.HighQuality;
+        //    draw();
+        //    this.Invalidate();
         //}
+
+        private void AnimationTick_Tick(object sender, EventArgs e) //animation tick basically slides lines up and down
+        {
+            // MessageBox.Show("merge merge");
+            Matrix m = new Matrix();
+            //   m.Translate(0, -amount);
+            if (direction==1)
+            {
+                m.Translate(0, -amount);
+            }
+            else
+            {
+                m.Translate(0, amount);
+            }
+            for (int i = 0; i < lines.Count; i++)
+            {
+
+                if (direction == 1 && lines[i].PathPoints.Select(p1 => p1.Y).Min() - amount > 0)//going up
+                {
+                    lines[i].Transform(m);
+                    Invalidate();
+                }
+                else
+                {
+                    direction = 0;
+
+                }
+                if (direction == 0 && lines[i].PathPoints.Select(p1 => p1.Y).Max() + amount < this.Height)
+                {
+                    lines[i].Transform(m);
+                    Invalidate();
+                }
+                else
+                {
+                    direction = 1;
+                }
+                /*
+             
+            if (direction == 1 && lines[i].PathPoints.Select(p1 => p1.Y).Max() - amount < this.Height) //going up
+                {
+                    lines[i].Transform(m);
+                }
+                else
+                {
+                    direction = 1 - direction;
+                }
+                if (direction == 0 && lines[i].PathPoints.Select(p1 => p1.Y).Min() + amount > this.Height) //going down
+                {
+                    MessageBox.Show("merge,merge");
+                    lines[i].Transform(m);
+                }
+                else
+                {
+                    direction = 1 - direction;
+                }
+                */
+            }
+        }
 
         private void generateLines()
         {
@@ -84,28 +153,55 @@ namespace chess
             {
                 template = new GraphicsPath();
                 template.StartFigure();
-                template.AddRectangle(new Rectangle(2 * i * distance, this.Height - 70, 7, 70));
+                template.AddRectangle(new Rectangle(2 * i * distance, this.Height - 90, 7, 70));
                 template.CloseAllFigures();
                 template.StartFigure();
-                template.AddArc(new RectangleF(2 * i * distance - 0.3f, this.Height - 75, 7.5f, 10), 0, -180);
+                template.AddArc(new RectangleF(2 * i * distance - 0.3f, this.Height - 95, 7.5f, 10), 0, -180);
                 template.CloseAllFigures();
                 template.StartFigure();
-                template.AddArc(new RectangleF(2 * i * distance - 0.4f, this.Height - 5, 7.5f, 10), 0, 180);
+                template.AddArc(new RectangleF(2 * i * distance - 0.4f, this.Height - 25, 7.5f, 10), 0, 180);
                 template.CloseAllFigures();
                 lines.Add(template);
             }
         }
 
-        private void slidingLines_Paint(object sender, PaintEventArgs e)
+        public void changeLocation(int index, int offsetX, int offsetY)
+        {
+            try
+            {
+                Matrix m = new Matrix();
+                m.Translate(offsetX, offsetY);
+                lines[index].Transform(m);
+                this.Invalidate();
+            }
+            catch (Exception Ex)
+            {
+                MessageBox.Show(Ex.StackTrace);
+                throw;
+            }
+        }
+
+        private void slidingLines_Paint_1(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
             foreach (GraphicsPath line in lines)
             {
                 e.Graphics.FillPath(new SolidBrush(Color.FromArgb(236, 23, 247)), line);
             }
-            Matrix m = new Matrix();
-            m.Translate(0, 10);
-            lines[0].Transform(m);
+        }
+
+        /// <summary>
+        /// Slide transition of lines
+        /// </summary>
+        /// <param name="amount">offset added</param>
+        /// <param name="direction">1-up , 0-down</param>
+        /// <param name="Milliseconds">Time in milliseconds for transition</param>
+        public void Slide(int Amount, int Direction, int Milliseconds)
+        {
+            animationTick.Interval = Milliseconds;
+            amount = Amount;
+            direction = Direction;
+            animationTick.Start();
         }
     }
 }
