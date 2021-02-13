@@ -66,6 +66,8 @@ namespace chess
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            LoadingScreen form50 = new LoadingScreen();
+            form50.Show();
             fillista();
             fillProcessList();
             contextMenuStrip1.Renderer = new RenderContextMenuStrip();
@@ -825,18 +827,21 @@ namespace chess
             if (con.State == ConnectionState.Closed)
             {
                 con.Open();
+
+                //cmd = new SqlCommand("Update Today SET Stop='" + now.ToString("MM/dd/yyyy hh:mm:ss") + "' , Ore='" + ore_zilnice + "', minute ='" + minute_zilnice + "' where id = (Select count(*) from Today)", con);
+                //cmd.ExecuteNonQuery();
+                //cmd.Dispose();
+                //con.Close();
             }
 
             //cmd = new SqlCommand("Update Folder SET Timeore='" + ore.ToString() + "', Timeminute='" + min.ToString() + "' where processname='" + item + "'", con);
-            cmd = new SqlCommand("Update Today SET Stop='" + now.ToString("MM/dd/yyyy hh:mm:ss") + "' , Ore='" + ore_zilnice + "', minute ='" + minute_zilnice + "' where id = (Select count(*) from Today)", con);
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
-            con.Close();
+
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 this.Hide();
                 e.Cancel = true;
             }
+
 
         }
 
@@ -1087,6 +1092,7 @@ namespace chess
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
+
 
 
 
