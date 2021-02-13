@@ -68,10 +68,10 @@ namespace chess
 
         private void slidingLines_Load(object sender, EventArgs e)
         {
+            this.DoubleBuffered = true;
             generateLines();
             animationTick.Tick += AnimationTick_Tick;
         }
-
 
         private void AnimationTick_Tick(object sender, EventArgs e) //animation tick basically slides lines up and down
         {
@@ -92,7 +92,6 @@ namespace chess
                 if (direction == 1 && lines[i].PathPoints.Select(p1 => p1.Y).Min() - amount > amount)//going up
                 {
                     lines[i].Transform(m);
-                    Invalidate();
                 }
                 else
                 {
@@ -102,12 +101,13 @@ namespace chess
                 if (direction == 0 && lines[i].PathPoints.Select(p1 => p1.Y).Max() + amount < this.Height)
                 {
                     lines[i].Transform(m);
-                    Invalidate();
                 }
                 else
                 {
                     direction = 1;
                 }
+                    Invalidate();
+                
                 /*
              
             if (direction == 1 && lines[i].PathPoints.Select(p1 => p1.Y).Max() - amount < this.Height) //going up
@@ -182,9 +182,6 @@ namespace chess
                 e.Graphics.FillPath(new SolidBrush(Color.FromArgb(236, 23, 247)), line);
             }
         }
-
-
-
 
         /// <summary>
         /// Slide transition of lines
