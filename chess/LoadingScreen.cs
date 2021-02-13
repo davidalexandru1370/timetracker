@@ -21,31 +21,28 @@ namespace chess
         private void LoadingScreen_Load(object sender, EventArgs e)
         {
             this.BackColor = Color.FromArgb(17, 18, 20);
-            slidingLines1.changeLocation(0, 0, -10);
+            slidingLines1.Scale(0, 1, 0.7f);
+            slidingLines1.changeLocation(0, 0, 10);
             slidingLines1.changeLocation(1, 0, -20);
             slidingLines1.changeLocation(2, 0, -40);
             slidingLines1.changeLocation(3, 0, -30);
-            slidingLines1.Slide(6,1,70);
+            slidingLines1.Slide(4, 1, 70);
         }
 
         private void slidingLines1_Load(object sender, EventArgs e)
         {
-            
+
         }
 
         private void linesAnimation_Tick(object sender, EventArgs e)
         {
-            
+
         }
 
         private void slidingLines1_Paint(object sender, PaintEventArgs e)
         {
 
         }
-
-       
-
-
 
         //private void generateLines()
         //{

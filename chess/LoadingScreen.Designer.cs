@@ -34,10 +34,10 @@
             // slidingLines1
             // 
             this.slidingLines1.Distance = 10;
-            this.slidingLines1.Location = new System.Drawing.Point(130, -23);
+            this.slidingLines1.Location = new System.Drawing.Point(123, 12);
             this.slidingLines1.Name = "slidingLines1";
             this.slidingLines1.numbOfLines = 5;
-            this.slidingLines1.Size = new System.Drawing.Size(136, 236);
+            this.slidingLines1.Size = new System.Drawing.Size(136, 142);
             this.slidingLines1.TabIndex = 0;
             this.slidingLines1.Paint += new System.Windows.Forms.PaintEventHandler(this.slidingLines1_Paint);
             // 

@@ -72,29 +72,13 @@ namespace chess
             animationTick.Tick += AnimationTick_Tick;
         }
 
-        private void draw()
-        {
-            foreach (GraphicsPath line in lines)
-            {
-                g.FillPath(new SolidBrush(Color.FromArgb(236, 23, 247)), line);
-            }
-        }
-
-        //protected override void OnPaint(PaintEventArgs e)
-        //{
-        //    base.OnPaint(e);
-        //    g = e.Graphics;
-        //    g.SmoothingMode = SmoothingMode.HighQuality;
-        //    draw();
-        //    this.Invalidate();
-        //}
 
         private void AnimationTick_Tick(object sender, EventArgs e) //animation tick basically slides lines up and down
         {
             // MessageBox.Show("merge merge");
             Matrix m = new Matrix();
             //   m.Translate(0, -amount);
-            if (direction==1)
+            if (direction == 1)
             {
                 m.Translate(0, -amount);
             }
@@ -105,7 +89,7 @@ namespace chess
             for (int i = 0; i < lines.Count; i++)
             {
 
-                if (direction == 1 && lines[i].PathPoints.Select(p1 => p1.Y).Min() - amount > 0)//going up
+                if (direction == 1 && lines[i].PathPoints.Select(p1 => p1.Y).Min() - amount > amount)//going up
                 {
                     lines[i].Transform(m);
                     Invalidate();
@@ -165,7 +149,7 @@ namespace chess
             }
         }
 
-        public void changeLocation(int index, int offsetX, int offsetY)
+        public void changeLocation(int index, float offsetX, float offsetY)
         {
             try
             {
@@ -181,6 +165,15 @@ namespace chess
             }
         }
 
+        public void Scale(int index, float offsetX, float offsetY)
+        {
+            Matrix m = new Matrix();
+            m.Scale(offsetX, offsetY);
+            lines[index].Transform(m);
+            this.Invalidate();
+        }
+
+
         private void slidingLines_Paint_1(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
@@ -189,6 +182,9 @@ namespace chess
                 e.Graphics.FillPath(new SolidBrush(Color.FromArgb(236, 23, 247)), line);
             }
         }
+
+
+
 
         /// <summary>
         /// Slide transition of lines
