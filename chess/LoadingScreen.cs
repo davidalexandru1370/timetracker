@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Data.SqlClient;
 
 namespace chess
 {
@@ -19,9 +20,12 @@ namespace chess
         }
         private byte direction = 0;
         private short index = 83;
-
+        private Timer BackgroundWorker = new Timer();
+        private SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\programepath.mdf;Integrated Security=True;Connect Timeout=30;MultipleActiveResultSets=True;");
         private void LoadingScreen_Load(object sender, EventArgs e)
         {
+            BackgroundWorker.Tick += BackgroundWorker_Tick;
+            BackgroundWorker.Interval = 2000;
             this.BackColor = Color.FromArgb(17, 18, 20);
             label1.ForeColor = Color.FromArgb(88, 88, 88);
             slidingLines1.Scale(0, 1, 0.7f);
@@ -29,9 +33,27 @@ namespace chess
             slidingLines1.changeLocation(1, 0, -20);
             slidingLines1.changeLocation(2, 0, -40);
             slidingLines1.changeLocation(3, 0, -30);
-            slidingLines1.Slide(4, 1, 70);
-            TextTimer.Interval = 100;
+            slidingLines1.Slide(5, 1, 50);
+            TextTimer.Interval = 80;
             TextTimer.Start();
+        }
+
+        private void BackgroundWorker_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                open_Connection();
+                if (con.State == ConnectionState.Open)
+                {
+                    Form1 Main = new Form1();
+                    Main.ShowDialog();
+                    this.Close();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         private void slidingLines1_Load(object sender, EventArgs e)
@@ -57,7 +79,7 @@ namespace chess
             }
             else
             {
-                index+=2;
+                index += 2;
                 label1.ForeColor = Color.FromArgb(index, index, index);
                 if (index >= 88)
                 {
@@ -66,12 +88,13 @@ namespace chess
             }
         }
 
-        //private void generateLines()
-        //{
-        //    GraphicsPath line = new GraphicsPath();
-        //    line.AddRectangle(new Rectangle(,,))
-
-        //}
+        private void open_Connection()
+        {
+            if (con.State != ConnectionState.Open)
+            {
+                con.Open();
+            }
+        }
 
     }
 }

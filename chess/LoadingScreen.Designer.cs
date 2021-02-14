@@ -29,34 +29,34 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.slidingLines1 = new chess.slidingLines();
             this.label1 = new System.Windows.Forms.Label();
             this.TextTimer = new System.Windows.Forms.Timer(this.components);
+            this.slidingLines1 = new chess.slidingLines();
             this.SuspendLayout();
-            // 
-            // slidingLines1
-            // 
-            this.slidingLines1.Distance = 10;
-            this.slidingLines1.Location = new System.Drawing.Point(139, 41);
-            this.slidingLines1.Name = "slidingLines1";
-            this.slidingLines1.numbOfLines = 5;
-            this.slidingLines1.Size = new System.Drawing.Size(136, 142);
-            this.slidingLines1.TabIndex = 0;
-            this.slidingLines1.Paint += new System.Windows.Forms.PaintEventHandler(this.slidingLines1_Paint);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Tai Le", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(151, 186);
+            this.label1.Location = new System.Drawing.Point(155, 194);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 27);
+            this.label1.Size = new System.Drawing.Size(126, 27);
             this.label1.TabIndex = 1;
-            this.label1.Text = "LOADING";
+            this.label1.Text = "LOADING...";
             // 
             // TextTimer
             // 
             this.TextTimer.Tick += new System.EventHandler(this.TextTimer_Tick);
+            // 
+            // slidingLines1
+            // 
+            this.slidingLines1.Distance = 10;
+            this.slidingLines1.Location = new System.Drawing.Point(141, 12);
+            this.slidingLines1.Name = "slidingLines1";
+            this.slidingLines1.numbOfLines = 5;
+            this.slidingLines1.Size = new System.Drawing.Size(136, 179);
+            this.slidingLines1.TabIndex = 0;
+            this.slidingLines1.Paint += new System.Windows.Forms.PaintEventHandler(this.slidingLines1_Paint);
             // 
             // LoadingScreen
             // 

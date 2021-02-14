@@ -1079,39 +1079,6 @@ namespace chess
             }
         }
 
-        /*
-                ANIMATIA DE LOADING SCREEN
-                |
-                |
-                V
-                 pulalela n-am mai facut-o
-              */
-
-
-
-
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-
-
-
-
-        }
-
-        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-
-
-
-        }
-
-        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-
-
-
-        }
-
         private void label7_MouseMove(object sender, MouseEventArgs e)
         {
             if (label7.ForeColor != Color.WhiteSmoke)

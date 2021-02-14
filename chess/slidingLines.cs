@@ -75,9 +75,7 @@ namespace chess
 
         private void AnimationTick_Tick(object sender, EventArgs e) //animation tick basically slides lines up and down
         {
-            // MessageBox.Show("merge merge");
             Matrix m = new Matrix();
-            //   m.Translate(0, -amount);
             if (direction == 1)
             {
                 m.Translate(0, -amount);
@@ -98,7 +96,7 @@ namespace chess
                     direction = 0;
 
                 }
-                if (direction == 0 && lines[i].PathPoints.Select(p1 => p1.Y).Max() + amount < this.Height)
+                if (direction == 0 && lines[i].PathPoints.Select(p1 => p1.Y).Max() + amount < this.Height) //going down
                 {
                     lines[i].Transform(m);
                 }
@@ -107,27 +105,6 @@ namespace chess
                     direction = 1;
                 }
                     Invalidate();
-                
-                /*
-             
-            if (direction == 1 && lines[i].PathPoints.Select(p1 => p1.Y).Max() - amount < this.Height) //going up
-                {
-                    lines[i].Transform(m);
-                }
-                else
-                {
-                    direction = 1 - direction;
-                }
-                if (direction == 0 && lines[i].PathPoints.Select(p1 => p1.Y).Min() + amount > this.Height) //going down
-                {
-                    MessageBox.Show("merge,merge");
-                    lines[i].Transform(m);
-                }
-                else
-                {
-                    direction = 1 - direction;
-                }
-                */
             }
         }
 
