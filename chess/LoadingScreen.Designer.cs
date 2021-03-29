@@ -56,6 +56,7 @@
             this.slidingLines1.numbOfLines = 5;
             this.slidingLines1.Size = new System.Drawing.Size(136, 179);
             this.slidingLines1.TabIndex = 0;
+            this.slidingLines1.Load += new System.EventHandler(this.slidingLines1_Load_1);
             this.slidingLines1.Paint += new System.Windows.Forms.PaintEventHandler(this.slidingLines1_Paint);
             // 
             // LoadingScreen

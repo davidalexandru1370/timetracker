@@ -142,8 +142,9 @@
             this.panel5.Controls.Add(this.label5);
             this.panel5.Location = new System.Drawing.Point(0, 22);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(352, 159);
+            this.panel5.Size = new System.Drawing.Size(352, 125);
             this.panel5.TabIndex = 8;
+            this.panel5.Paint += new System.Windows.Forms.PaintEventHandler(this.panel5_Paint);
             // 
             // pictureBox1
             // 
@@ -170,7 +171,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.SeaShell;
-            this.label1.Location = new System.Drawing.Point(65, 105);
+            this.label1.Location = new System.Drawing.Point(15, 90);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(0, 19);
             this.label1.TabIndex = 3;
@@ -301,7 +302,7 @@
             this.panel3.Controls.Add(this.label7);
             this.panel3.Location = new System.Drawing.Point(-5, -4);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(580, 62);
+            this.panel3.Size = new System.Drawing.Size(580, 46);
             this.panel3.TabIndex = 12;
             this.panel3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel3_MouseMove);
             // 
@@ -325,7 +326,6 @@
             this.label8.Size = new System.Drawing.Size(117, 26);
             this.label8.TabIndex = 1;
             this.label8.Text = "STATISTICS";
-            this.label8.Visible = false;
             this.label8.Click += new System.EventHandler(this.label8_Click);
             this.label8.MouseLeave += new System.EventHandler(this.label8_MouseLeave);
             this.label8.MouseMove += new System.Windows.Forms.MouseEventHandler(this.label8_MouseMove);

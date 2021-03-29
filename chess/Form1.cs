@@ -66,8 +66,6 @@ namespace chess
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            LoadingScreen form50 = new LoadingScreen();
-            form50.Show();
             fillista();
             fillProcessList();
             contextMenuStrip1.Renderer = new RenderContextMenuStrip();
@@ -181,6 +179,7 @@ namespace chess
                 lista.Add(dt.Rows[i][0].ToString());
                 i++;
             }
+            listView1.Invalidate();
             checkConnection();
         }
 
@@ -212,6 +211,7 @@ namespace chess
                 {
                     con.Open();
                 }
+
                 try
                 {
                     cmd = new SqlCommand("if not exists(Select 1 from Folder where Path ='" + cale + "') begin Insert into Folder(Path,Timeore,Timeminute,ProcessName,DisplayName)  values (@cale,@ore,@minute,@process,@d) end  else begin Select 2 end", con);
@@ -222,24 +222,21 @@ namespace chess
                     cmd.Parameters.AddWithValue(@"d", name);
                     cmd.ExecuteNonQuery();
                     cmd.Dispose();
+                    fillProcessList();
                     fillContextmenustrip2();
+                    Process[] pvar = Process.GetProcesses();
+                    pos = (from p in pvar join y in processList on p.ProcessName equals y select processList.IndexOf(y)).ToList();
+                    listView1.Invalidate();
                 }
+
                 catch (Exception)
                 {
 
                 }
 
-
-
                 if (con.State == ConnectionState.Open)
                 {
                     con.Close();
-                }
-
-
-                else
-                {
-                    return;
                 }
             }
         }
@@ -324,12 +321,7 @@ namespace chess
             cmd = new SqlCommand("DBCC CHECKIDENT(Today,RESEED,0)", con);
             cmd.ExecuteNonQuery();
             cmd.Dispose();
-            cmd = new SqlCommand("DBCC CHECKIDENT(Folder,RESEED,0)", con);
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
-            cmd = new SqlCommand("DBCC CHECKIDENT(Folder,RESEED)", con);
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
+
             contextMenuStrip2.Items.RemoveAt(listView1.FocusedItem.Index);
             //cmd = new SqlCommand("ALTER TABLE Folder AUTO_INCREMENT = 1",con);
             //cmd.ExecuteNonQuery();
@@ -578,7 +570,6 @@ namespace chess
                     e.Graphics.FillRectangle(Brushes.Gainsboro, e.Bounds.X + 24, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height - 1);
                 }
                 e.Graphics.DrawString(e.Item.Text, new Font("Microsoft Sans Serif", 9.25f), Brushes.GreenYellow, e.Item.Position.X + 5, e.Item.Position.Y);
-                //listView1.Invalidate(new Rectangle(e.Item.Position.X + 5, e.Item.Position.Y, listView1.Size.Width, listView1.Size.Height));
             }
             else
             {
@@ -847,7 +838,6 @@ namespace chess
 
         private void fillweektable()
         {
-            //      delete_week();
             int baga = 0;
             con.Open();
             cmd = new SqlCommand("if not exists(Select 1 from Week) begin Select 1 end else begin Select 0 end", con);
@@ -1161,7 +1151,6 @@ namespace chess
 
         private void panel4_Paint(object sender, PaintEventArgs e)
         {
-
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
             if (textbox_button_X.PointCount != 0)
             {
@@ -1359,6 +1348,12 @@ namespace chess
             //  e.Graphics.DrawLine(new Pen(Brushes.Gray,10), new Point(2, contextMenuStrip2.Bottom - 1), new Point(2, contextMenuStrip2.Right - 1));
 
         }
+
+        private void panel5_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
         /*-----------------------------------------------------------------------------------------*/
 
 

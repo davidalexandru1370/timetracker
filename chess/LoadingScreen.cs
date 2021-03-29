@@ -22,10 +22,12 @@ namespace chess
         private short index = 83;
         private Timer BackgroundWorker = new Timer();
         private SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\programepath.mdf;Integrated Security=True;Connect Timeout=30;MultipleActiveResultSets=True;");
+        Form1 Main;
         private void LoadingScreen_Load(object sender, EventArgs e)
         {
-            BackgroundWorker.Tick += BackgroundWorker_Tick;
+            Main = new Form1();
             BackgroundWorker.Interval = 2000;
+            BackgroundWorker.Tick += BackgroundWorker_Tick;
             this.BackColor = Color.FromArgb(17, 18, 20);
             label1.ForeColor = Color.FromArgb(88, 88, 88);
             slidingLines1.Scale(0, 1, 0.7f);
@@ -36,25 +38,25 @@ namespace chess
             slidingLines1.Slide(5, 1, 50);
             TextTimer.Interval = 80;
             TextTimer.Start();
+            BackgroundWorker.Start();
         }
 
         private void BackgroundWorker_Tick(object sender, EventArgs e)
         {
-            try
+            if (con.State != ConnectionState.Open)
             {
-                open_Connection();
-                if (con.State == ConnectionState.Open)
-                {
-                    Form1 Main = new Form1();
-                    Main.ShowDialog();
-                    this.Close();
-                }
+                con.Open();
             }
-            catch (Exception)
+            else
             {
-                throw;
+                BackgroundWorker.Stop();
+                this.Hide();
+                Main.ShowDialog();
+                this.Close();
             }
         }
+
+
 
         private void slidingLines1_Load(object sender, EventArgs e)
         {
@@ -88,13 +90,10 @@ namespace chess
             }
         }
 
-        private void open_Connection()
+        private void slidingLines1_Load_1(object sender, EventArgs e)
         {
-            if (con.State != ConnectionState.Open)
-            {
-                con.Open();
-            }
-        }
 
+        }
     }
 }
+
