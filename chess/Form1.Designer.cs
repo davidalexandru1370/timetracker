@@ -60,8 +60,8 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -308,7 +308,11 @@
             this.panel3.Controls.Add(this.label7);
             this.panel3.Location = new System.Drawing.Point(-5, -4);
             this.panel3.Name = "panel3";
+<<<<<<< Updated upstream
             this.panel3.Size = new System.Drawing.Size(580, 62);
+=======
+            this.panel3.Size = new System.Drawing.Size(580, 47);
+>>>>>>> Stashed changes
             this.panel3.TabIndex = 12;
             this.panel3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel3_MouseMove);
             // 
@@ -386,14 +390,6 @@
             this.deleteToolStripMenuItem.MouseLeave += new System.EventHandler(this.deleteToolStripMenuItem_MouseLeave);
             this.deleteToolStripMenuItem.MouseMove += new System.Windows.Forms.MouseEventHandler(this.deleteToolStripMenuItem_MouseMove);
             // 
-            // notifyIcon1
-            // 
-            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-            this.notifyIcon1.Text = "Time Tracker";
-            this.notifyIcon1.Visible = true;
-            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
-            this.notifyIcon1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDown);
-            // 
             // contextMenuStrip2
             // 
             this.contextMenuStrip2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(11)))), ((int)(((byte)(19)))));
@@ -404,6 +400,15 @@
             this.contextMenuStrip2.ShowItemToolTips = false;
             this.contextMenuStrip2.Size = new System.Drawing.Size(36, 4);
             this.contextMenuStrip2.Paint += new System.Windows.Forms.PaintEventHandler(this.contextMenuStrip2_Paint);
+            // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "Time Tracker";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            this.notifyIcon1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDown);
             // 
             // Form1
             // 
@@ -476,9 +481,9 @@
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
         // private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
     }
 }

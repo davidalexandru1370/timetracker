@@ -316,6 +316,7 @@ namespace chess
             // MessageBox.Show(cmd.ExecuteNonQuery().ToString());
             cmd.ExecuteNonQuery();
             cmd.Dispose();
+<<<<<<< Updated upstream
             cmd = new SqlCommand("Delete from Today", con);
             cmd.ExecuteNonQuery();
             cmd.Dispose();
@@ -328,6 +329,8 @@ namespace chess
             cmd = new SqlCommand("DBCC CHECKIDENT(Folder,RESEED)", con);
             cmd.ExecuteNonQuery();
             cmd.Dispose();
+=======
+>>>>>>> Stashed changes
             contextMenuStrip2.Items.RemoveAt(listView1.FocusedItem.Index);
             //cmd = new SqlCommand("ALTER TABLE Folder AUTO_INCREMENT = 1",con);
             //cmd.ExecuteNonQuery();
@@ -820,6 +823,7 @@ namespace chess
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e) // este apelata cand se apasa pe butonul  X sau se apasa alt+f4
         {
+<<<<<<< Updated upstream
             DateTime now = DateTime.Now;
 
             if (con.State == ConnectionState.Closed)
@@ -832,12 +836,17 @@ namespace chess
             cmd.ExecuteNonQuery();
             cmd.Dispose();
             con.Close();
+=======
+>>>>>>> Stashed changes
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 this.Hide();
                 e.Cancel = true;
             }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         }
 
         private void fillweektable()
@@ -879,31 +888,12 @@ namespace chess
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedIndex == 1)
-            {
-                label6.Text = ore_zilnice.ToString() + " hours and " + minute_zilnice + " minutes";
-                SqlDataAdapter sda = new SqlDataAdapter("Select Ore from Today", con);
-                DataTable dt = new DataTable();
-                sda.Fill(dt);
-                // MessageBox.Show("mere");
-                //chart1.ChartAreas[0].AxisX.LabelStyle.ForeColor = Color.Maroon;
-                //chart1.ChartAreas[0].AxisY.LabelStyle.ForeColor = Color.Maroon;
-                //chart1.ChartAreas[0].AxisX.Maximum = 24;
-                //chart1.ChartAreas[0].AxisX.Minimum = 0;
-                //chart1.ChartAreas[0].AxisY.Maximum = 24;
-                //chart1.ChartAreas[0].AxisY.Minimum = 0;
-                //   chart1.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
-                //chart1.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
-                //   chart1.Series[0].Points.AddXY(5, 5);
-                //  chart1.Series[0].Points.AddXY(8, 7);
-                int i = 0;
-                for (i = 0; i < dt.Rows.Count; i++)
-                {
-                    int ore = (int)dt.Rows[i][0];
-                    //      chart1.Series[0].Points.AddXY(ore, ore);
-                    //     chart1.Series[0].Points.AddXY((double)dt.Rows[i][0], (double)dt.Rows[i][0]);
-                }
-            }
+               
+
+
+
+
+
         }
 
         private void pictureBox2_Click(object sender, EventArgs e)
@@ -1154,14 +1144,12 @@ namespace chess
 
         private void label8_Click(object sender, EventArgs e)
         {
-
             if (tabControl1.SelectedIndex != 1)
             {
                 tabControl1.SelectedTab = tabControl1.TabPages[1];
                 label8.ForeColor = Color.WhiteSmoke;
                 label7.ForeColor = Color.Gray;
             }
-
         }
 
         private void textBox1_Enter(object sender, EventArgs e)
@@ -1183,7 +1171,6 @@ namespace chess
             textBox1.BorderStyle = BorderStyle.FixedSingle;
             textbox_button_X = new GraphicsPath();
             panel4.Invalidate();
-
         }
 
         private void panel4_Paint(object sender, PaintEventArgs e)
@@ -1194,7 +1181,6 @@ namespace chess
             {
                 e.Graphics.DrawPath(Pens.Red, textbox_button_X);
             }
-
         }
 
         private void panel4_MouseMove(object sender, MouseEventArgs e)
@@ -1280,6 +1266,10 @@ namespace chess
                     Process[] pvar = Process.GetProcesses();
                     pos = (from p in pvar join y in processList on p.ProcessName equals y select processList.IndexOf(y)).ToList();
                     listView1.Invalidate();
+                    label5.Text = string.Empty;
+                    pictureBox1.Image = null;
+                    label1.Text = string.Empty;
+                    button2.Visible = false;
                 }
             }
         }
