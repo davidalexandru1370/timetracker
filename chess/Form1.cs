@@ -12,7 +12,7 @@ using System.Data.Common;
 using System.Drawing.Drawing2D;
 using Microsoft.Win32;
 using th = System.Threading;
-
+//using Microsoft.Toolkit.Forms.UI.Controls;
 namespace chess
 {
     public partial class Form1 : Form
@@ -76,7 +76,7 @@ namespace chess
             tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
             fill_background_tabcontrol();
             picturebox_center = new Point(pictureBox2.Right - 300, pictureBox2.Bottom - 255);
-            checkday("today");
+            checkday();
             fillweektable();
             imagine_setari = Image.FromFile(Application.StartupPath + @"\roata.png");
             Graphics g = listView1.CreateGraphics();
@@ -122,7 +122,7 @@ namespace chess
         {
             minute_zilnice++;
             label6.Text = ore_zilnice.ToString() + " ore " + minute_zilnice.ToString() + " minute";
-            if (minute_zilnice > 60)
+            if (minute_zilnice >= 60)
             {
                 ore_zilnice++;
                 minute_zilnice = 0;
@@ -298,13 +298,8 @@ namespace chess
             cmd = new SqlCommand("DBCC CHECKIDENT(Folder,RESEED,0)", con);
             cmd.ExecuteNonQuery();
             cmd.Dispose();
-            cmd = new SqlCommand("Delete from Today", con);
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
-            cmd = new SqlCommand("DBCC CHECKIDENT(Today,RESEED,0)", con);
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
-            con.Close();
+
+
         }
 
         public void stergere(string nume)
@@ -318,9 +313,7 @@ namespace chess
             cmd = new SqlCommand("Delete from Today", con);
             cmd.ExecuteNonQuery();
             cmd.Dispose();
-            cmd = new SqlCommand("DBCC CHECKIDENT(Today,RESEED,0)", con);
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
+
 
             contextMenuStrip2.Items.RemoveAt(listView1.FocusedItem.Index);
             //cmd = new SqlCommand("ALTER TABLE Folder AUTO_INCREMENT = 1",con);
@@ -502,20 +495,24 @@ namespace chess
                 }
                 foreach (var item in items)
                 {
+                    cmd = new SqlCommand("Select path,displayname from Folder where processname='" + item + "'", con);
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader sdr = cmd.ExecuteReader();
+                    cmd.Dispose();
                     try
                     {
                         if (Properties.Settings.Default.Notification == true && !NotifcationList.ContainsKey(item))
                         {
-                            cmd = new SqlCommand("Select path,displayname from Folder where processname='" + item + "'", con);
-                            cmd.ExecuteNonQuery();
-                            SqlDataReader sdr = cmd.ExecuteReader();
+
                             if (sdr.Read() && this.ContainsFocus == false)
                             {
                                 coada.Enqueue(new notifcation(sdr[0].ToString(), sdr[1].ToString(), Properties.Settings.Default.Notification_Place));
                             }
                             NotifcationList[item] = sdr[1].ToString();
-                            cmd.Dispose();
+
+
                         }
+
                         cmd = new SqlCommand("Select timeore from Folder where processname='" + item + "'", con);
                         int ore = (int)cmd.ExecuteScalar();
                         cmd.ExecuteNonQuery();
@@ -530,17 +527,38 @@ namespace chess
                             min = 0;
                             ore++;
                         }
+
+                        if (sdr.Read())
+                        {
+                            cmd = new SqlCommand("Select [" + DateTime.Now.Hour + "] from Today where AppName='" + sdr[1].ToString() + "' and ziua ='" + DateTime.Now.Date + "' ", con);
+                            int minutes = (int)cmd.ExecuteScalar();
+                            cmd.ExecuteNonQuery();
+                            cmd.Dispose();
+                            minutes++;
+
+                            cmd = new SqlCommand(@"Update Today SET  [" + DateTime.Now.Hour + "]='" + minutes + "' where AppName='" + sdr[1].ToString() + "' and ziua='" + DateTime.Now.Date + "'", con); //pentru coloanele ce incep cu litera se pun in [] , [nume_coloana]
+                            cmd.ExecuteNonQuery();
+                            cmd.Dispose();
+                        }
+
+
+                        //foreach (var app in lista)
+                        //{
+                        //    cmd = new SqlCommand("Update Today SET '" + DateTime.Now.Hour + "'=SUM((Select '" + DateTime.Now.Hour + "' from Today where AppName='" + app + "') + 1) where AppName='" + app + "'", con);
+                        //    cmd.ExecuteNonQuery();
+                        //    cmd.Dispose();
+                        //}
+
                         cmd = new SqlCommand("Update Folder SET Timeore='" + ore.ToString() + "', Timeminute='" + min.ToString() + "' where processname='" + item + "'", con);
                         cmd.ExecuteNonQuery();
                         cmd.Dispose();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-
+                        MessageBox.Show(ex.ToString());
                     }
+                    con.Close();
                 }
-                con.Close();
-
                 foreach (var item in coada)
                 {
                     new th.Thread(() => { item.TopMost = true; item.TopLevel = true; item.ShowDialog(); }).Start();
@@ -630,62 +648,41 @@ namespace chess
             e.Cancel = true;
         }
 
-        private void checkday(string tag)
+        private void checkday()
         {
-            DateTime now = DateTime.Now;
-            if (now.Month > thismonth.Month)
-            {
-                thismonth = now;
-                fillmonth();
-            }
-            con.Open();
-            int baga = 0;
             try
             {
-                cmd = new SqlCommand("if not exists(Select 1 from Today where ziua ='" + now.Day + "') begin Select 1 end else begin Select 2 end", con);
-                baga = (int)cmd.ExecuteScalar();
+                con.Open();
+                cmd = new SqlCommand("if not exists(Select 1 from Today where ziua='" + DateTime.Now.Date + "') begin Select 0 end else begin Select 1 end", con);
+                int este = (int)cmd.ExecuteScalar();
                 cmd.ExecuteNonQuery();
                 cmd.Dispose();
-                if (baga == 1)
+                if (este == 0) //daca nu este
                 {
-                    delete_today();
-                    con.Close();
-                    fill_week();
-                    con.Open();
-                    cmd = new SqlCommand("Insert into Today(ziua,launch,ore,minute) values('" + now.Day + "','" + now.ToString("MM/dd/yyyy hh:mm:ss") + "',0,0)", con);
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
-                    ore_zilnice = 0;
-                    minute_zilnice = 1;
+                    foreach (var item in lista)
+                    {
+                        // cmd = new SqlCommand("Insert into Today(ziua,AppName,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23) values('" + DateTime.Now.Date + "','" + item + "',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)", con);
+                        cmd = new SqlCommand("Insert into Today(ziua,AppName) values('" + DateTime.Now.Date + "','" + item + "')", con);
+                        cmd.ExecuteNonQuery();
+                        cmd.Dispose();
+                    }
                 }
                 else
                 {
-                    cmd = new SqlCommand("Select Ore from Today where id =(Select count(*) from Today)", con);
-                    ore_zilnice = (int)cmd.ExecuteScalar();
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
-                    cmd = new SqlCommand("Select Minute from Today where id=(Select count(*) from Today)", con);
-                    minute_zilnice = (int)cmd.ExecuteScalar();
-                    if (minute_zilnice == 60)
-                    {
-                        ore_zilnice++;
-                        minute_zilnice = 0;
-                    }
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
-                    //   cmd.ExecuteNonQuery();
-                    //   cmd.Dispose();
-                    cmd = new SqlCommand("Insert into Today(ziua,launch,ore,minute) values('" + now.Day + "','" + now.ToString("MM/dd/yyyy hh:mm:ss") + "','" + ore_zilnice.ToString() + "','" + minute_zilnice.ToString() + "')", con);
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
+
+
+
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                MessageBox.Show(ex.StackTrace);
+                throw;
             }
-
-            con.Close();
+            finally
+            {
+                con.Close();
+            }
         }
 
         private void fillmonth()
@@ -802,9 +799,6 @@ namespace chess
             cmd = new SqlCommand("Delete from  Today", con);
             cmd.ExecuteNonQuery();
             cmd.Dispose();
-            cmd = new SqlCommand("DBCC CHECKIDENT(Today,RESEED,0)", con);
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
             if (con.State == ConnectionState.Open)
             {
                 con.Close();
@@ -813,19 +807,6 @@ namespace chess
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e) // este apelata cand se apasa pe butonul  X sau se apasa alt+f4
         {
-            DateTime now = DateTime.Now;
-
-            if (con.State == ConnectionState.Closed)
-            {
-                con.Open();
-
-                //cmd = new SqlCommand("Update Today SET Stop='" + now.ToString("MM/dd/yyyy hh:mm:ss") + "' , Ore='" + ore_zilnice + "', minute ='" + minute_zilnice + "' where id = (Select count(*) from Today)", con);
-                //cmd.ExecuteNonQuery();
-                //cmd.Dispose();
-                //con.Close();
-            }
-
-            //cmd = new SqlCommand("Update Folder SET Timeore='" + ore.ToString() + "', Timeminute='" + min.ToString() + "' where processname='" + item + "'", con);
 
             if (e.CloseReason == CloseReason.UserClosing)
             {
@@ -874,31 +855,11 @@ namespace chess
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedIndex == 1)
-            {
-                label6.Text = ore_zilnice.ToString() + " hours and " + minute_zilnice + " minutes";
-                SqlDataAdapter sda = new SqlDataAdapter("Select Ore from Today", con);
-                DataTable dt = new DataTable();
-                sda.Fill(dt);
-                // MessageBox.Show("mere");
-                //chart1.ChartAreas[0].AxisX.LabelStyle.ForeColor = Color.Maroon;
-                //chart1.ChartAreas[0].AxisY.LabelStyle.ForeColor = Color.Maroon;
-                //chart1.ChartAreas[0].AxisX.Maximum = 24;
-                //chart1.ChartAreas[0].AxisX.Minimum = 0;
-                //chart1.ChartAreas[0].AxisY.Maximum = 24;
-                //chart1.ChartAreas[0].AxisY.Minimum = 0;
-                //   chart1.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
-                //chart1.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
-                //   chart1.Series[0].Points.AddXY(5, 5);
-                //  chart1.Series[0].Points.AddXY(8, 7);
-                int i = 0;
-                for (i = 0; i < dt.Rows.Count; i++)
-                {
-                    int ore = (int)dt.Rows[i][0];
-                    //      chart1.Series[0].Points.AddXY(ore, ore);
-                    //     chart1.Series[0].Points.AddXY((double)dt.Rows[i][0], (double)dt.Rows[i][0]);
-                }
-            }
+
+
+
+
+
         }
 
         private void pictureBox2_Click(object sender, EventArgs e)

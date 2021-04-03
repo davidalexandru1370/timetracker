@@ -52,7 +52,6 @@ namespace chess
                 BackgroundWorker.Stop();
                 this.Hide();
                 Main.ShowDialog();
-                this.Close();
             }
         }
 

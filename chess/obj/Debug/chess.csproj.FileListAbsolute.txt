@@ -49,3 +49,5 @@ C:\Users\andro\Documents\GitHub\timetracker\chess\obj\Debug\chess.pdb
 C:\Users\andro\Documents\GitHub\timetracker\chess\bin\Debug\System.ComponentModel.Annotations.dll
 C:\Users\andro\Documents\GitHub\timetracker\chess\obj\Debug\chess.slidingLines.resources
 C:\Users\andro\Documents\GitHub\timetracker\chess\obj\Debug\chess.csproj.CopyComplete
+C:\Users\andro\Documents\GitHub\timetracker\chess\bin\Debug\Microsoft.Toolkit.Forms.UI.Controls.WebView.dll
+C:\Users\andro\Documents\GitHub\timetracker\chess\bin\Debug\Microsoft.Toolkit.Forms.UI.Controls.WebView.pdb
