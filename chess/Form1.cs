@@ -66,6 +66,7 @@ namespace chess
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.DoubleBuffered = true;
             fillista();
             fillProcessList();
             contextMenuStrip1.Renderer = new RenderContextMenuStrip();
@@ -97,11 +98,15 @@ namespace chess
             rotateimage.Interval = 50;
             //  timer2.Enabled = true;
             //    timer2.Start();
+            // comboBox1.DrawMode = DrawMode.OwnerDrawVariable;
+            // comboBox1.ItemHeight = 30;
             timer1.Start();
             notifyIcon1.Visible = true;
             fillContextmenustrip2();
             label6.Text = ore_zilnice.ToString() + " hours and " + minute_zilnice + " minutes";
             button2.Visible = false;
+            
+
         }
 
         private void fill_background_tabcontrol()
@@ -126,8 +131,15 @@ namespace chess
             {
                 ore_zilnice++;
                 minute_zilnice = 0;
-                //   chart1.Series[0].Points.AddXY(ore_zilnice, ore_zilnice);
             }
+            if (con.State == ConnectionState.Closed)
+            {
+                con.Open();
+            }
+            cmd = new SqlCommand("Update DisplayTime SET ore ='" + ore_zilnice + "' , minute='" + minute_zilnice + "'  where ziua='" + DateTime.Now.Date + "' ", con);
+            cmd.ExecuteNonQuery();
+            cmd.Dispose();
+            con.Close();
         }
 
 
@@ -440,6 +452,11 @@ namespace chess
                     // label1.Text = "Played time: " + dt.Rows[0][1].ToString() + " Hours and " + dt.Rows[0][2].ToString() + " minutes";
                     label1.Text = "Played time: " + dt.Rows[0][1].ToString() + "Hours and " + dt.Rows[0][2].ToString() + " minutes";
                     label5.Text = listView1.FocusedItem.Text;
+                 
+
+
+
+
                 }
                 catch (Exception ex)
                 {
@@ -653,6 +670,15 @@ namespace chess
             try
             {
                 con.Open();
+                cmd = new SqlCommand("if not exists(Select 1 from DisplayTime where ziua='" + DateTime.Now.Date + "') begin Insert into Displaytime(ziua) values('" + DateTime.Now.Date + "') end else begin Select ore,minute from Displaytime  where ziua='" + DateTime.Now.Date + "' end", con);
+                cmd.ExecuteNonQuery();
+                SqlDataReader sdr = cmd.ExecuteReader();
+                if (sdr.Read())
+                {
+                    ore_zilnice = (int)sdr[0];
+                    minute_zilnice = (int)sdr[1];
+                }
+                cmd.Dispose();
                 cmd = new SqlCommand("if not exists(Select 1 from Today where ziua='" + DateTime.Now.Date + "') begin Select 0 end else begin Select 1 end", con);
                 int este = (int)cmd.ExecuteScalar();
                 cmd.ExecuteNonQuery();
@@ -667,12 +693,7 @@ namespace chess
                         cmd.Dispose();
                     }
                 }
-                else
-                {
 
-
-
-                }
             }
             catch (Exception ex)
             {
@@ -680,126 +701,6 @@ namespace chess
                 throw;
             }
             finally
-            {
-                con.Close();
-            }
-        }
-
-        private void fillmonth()
-        {
-            if (con.State == ConnectionState.Closed)
-            {
-                con.Open();
-            }
-            int baga = 0;
-            cmd = new SqlCommand("if not exists(Select 1 from Year) begin Select 1 end", con);
-            baga = (int)cmd.ExecuteScalar();
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
-
-            if (baga == 1)
-            {
-                fill_month();
-            }
-            else
-            {
-                cmd = new SqlCommand("Insert into Year(" + DateTime.Now.Year + ") values((Select SUM(SUM(Week1)+SUM(Week2)+SUM(Week3)+SUM(Week4)+SUM(Week5)))) where id ='" + thismonth + "'", con);
-                cmd.ExecuteNonQuery();
-                cmd.Dispose();
-            }
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-
-        }
-
-        private void delete_month()
-        {
-            if (con.State == ConnectionState.Closed)
-            {
-                con.Open();
-            }
-            cmd = new SqlCommand("Delete from Week", con);
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
-            cmd = new SqlCommand("DBCC CHECKIDENT(Week,Reseed,0)", con);
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-        }
-
-        private void fill_month()
-        {
-            if (con.State == ConnectionState.Closed)
-            {
-                con.Open();
-            }
-
-            for (int i = 0; i < 12; i++)
-            {
-                cmd = new SqlCommand("Insert into Year(month) values(0)", con);
-                cmd.ExecuteNonQuery();
-                cmd.Dispose();
-            }
-
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-        }
-
-        private void fill_week()
-        {
-            con.Open();
-            int ziua = (int)DateTime.Now.DayOfWeek;
-            if (thisweek.AddDays(7) > DateTime.Now.Date)
-            {
-                if (idweek > 5)
-                {
-                    idweek = 1;
-                    //fill year
-                    fillmonth();
-                    //clear week
-                    return;
-                }
-                else
-                {
-                    idweek++;
-                }
-            }
-            if (ziua == 0)
-            {
-                ziua = 7;
-            }
-            if (minute_zilnice >= 29)
-            {
-                cmd = new SqlCommand("Update Week SET Week" + (idweek).ToString() + "='" + (ore_zilnice + 1).ToString() + "' where id='" + ziua.ToString() + "'", con);
-                cmd.ExecuteNonQuery();
-                cmd.Dispose();
-            }
-            else
-            {
-                cmd = new SqlCommand("Update Week SET Week" + (idweek).ToString() + "='" + ore_zilnice.ToString() + "' where id='" + ziua.ToString() + "'", con);
-                cmd.ExecuteNonQuery();
-                cmd.Dispose();
-            }
-            con.Close();
-        }
-
-        private void delete_today()
-        {
-            if (con.State == ConnectionState.Closed)
-            {
-                con.Open();
-            }
-            cmd = new SqlCommand("Delete from  Today", con);
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
-            if (con.State == ConnectionState.Open)
             {
                 con.Close();
             }
@@ -1314,6 +1215,8 @@ namespace chess
         {
 
         }
+
+    
 
         /*-----------------------------------------------------------------------------------------*/
 
