@@ -61,7 +61,6 @@ namespace chess
         {
             con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\programepath.mdf;Integrated Security=True;Connect Timeout=30;MultipleActiveResultSets=True;");
             InitializeComponent();
-            //   stergere();
             label5.Text = null;
         }
 
@@ -308,11 +307,10 @@ namespace chess
             cmd = new SqlCommand("Delete  from Folder", con);
             cmd.ExecuteNonQuery();
             cmd.Dispose();
-            cmd = new SqlCommand("DBCC CHECKIDENT(Folder,RESEED,0)", con);
+            cmd = new SqlCommand("Delete from DisplayTime", con);
             cmd.ExecuteNonQuery();
             cmd.Dispose();
-
-
+            con.Close();
         }
 
         public void stergere(string nume)
