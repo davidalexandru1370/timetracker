@@ -43,17 +43,28 @@ namespace chess
 
         private void BackgroundWorker_Tick(object sender, EventArgs e)
         {
-            if (con.State != ConnectionState.Open)
+            try
             {
-                con.Open();
+                if (con.State != ConnectionState.Open)
+                {
+                    con.OpenAsync();
+                }
+                else
+                {
+                    BackgroundWorker.Stop();
+                    this.Hide();
+                    Main.ShowDialog();
+                }
             }
-            else
+            catch (Exception)
             {
-                BackgroundWorker.Stop();
-                this.Hide();
-                Main.ShowDialog();
+
+                throw;
             }
+
         }
+
+
 
         private void slidingLines1_Load(object sender, EventArgs e)
         {
@@ -90,15 +101,6 @@ namespace chess
         private void slidingLines1_Load_1(object sender, EventArgs e)
         {
 
-        }
-
-        private void LoadingScreen_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason==CloseReason.UserClosing)
-            {
-                this.Hide();
-                e.Cancel = true;
-            }
         }
     }
 }
