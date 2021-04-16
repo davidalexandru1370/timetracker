@@ -12,6 +12,7 @@ using System.Data.Common;
 using System.Drawing.Drawing2D;
 using Microsoft.Win32;
 using th = System.Threading;
+using System.Globalization;
 //using Microsoft.Toolkit.Forms.UI.Controls;
 namespace chess
 {
@@ -105,7 +106,7 @@ namespace chess
             fillContextmenustrip2();
             label6.Text = ore_zilnice.ToString() + " hours and " + minute_zilnice + " minutes";
             button2.Visible = false;
-            
+
 
         }
 
@@ -136,7 +137,7 @@ namespace chess
             {
                 con.Open();
             }
-            cmd = new SqlCommand("Update DisplayTime SET ore ='" + ore_zilnice + "' , minute='" + minute_zilnice + "'  where ziua='" + DateTime.Now.Date + "' ", con);
+            cmd = new SqlCommand("Update DisplayTime SET ore ='" + ore_zilnice + "' , minute='" + minute_zilnice + "'  where ziua='" + DateTime.Now.Date.ToString("MM/dd/yyyy") + "' ", con);
             cmd.ExecuteNonQuery();
             cmd.Dispose();
             con.Close();
@@ -438,33 +439,30 @@ namespace chess
             {
                 con.Open();
             }
-
-
-            using (SqlDataAdapter sda = new SqlDataAdapter("Select Path , Timeore , Timeminute from Folder where DisplayName = '" + lista.ElementAt(listView1.FocusedItem.Index) + "' ", con))
+            //  MessageBox.Show(lista.Count.ToString());
+            if (listView1.Focused == true)
             {
-                try
+                using (SqlDataAdapter sda = new SqlDataAdapter("Select Path , Timeore , Timeminute from Folder where DisplayName = '" + lista.ElementAt(listView1.FocusedItem.Index) + "' ", con))
                 {
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    Icon imajine = Icon.ExtractAssociatedIcon(dt.Rows[0][0].ToString());
-                    pictureBox1.Image = imajine.ToBitmap();
-                    button2.Visible = true;
-                    // label1.Text = "Played time: " + dt.Rows[0][1].ToString() + " Hours and " + dt.Rows[0][2].ToString() + " minutes";
-                    label1.Text = "Played time: " + dt.Rows[0][1].ToString() + "Hours and " + dt.Rows[0][2].ToString() + " minutes";
-                    label5.Text = listView1.FocusedItem.Text;
-                 
+                    try
+                    {
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        Icon imajine = Icon.ExtractAssociatedIcon(dt.Rows[0][0].ToString());
+                        pictureBox1.Image = imajine.ToBitmap();
+                        button2.Visible = true;
+                        // label1.Text = "Played time: " + dt.Rows[0][1].ToString() + " Hours and " + dt.Rows[0][2].ToString() + " minutes";
+                        label1.Text = "Played time: " + dt.Rows[0][1].ToString() + "Hours and " + dt.Rows[0][2].ToString() + " minutes";
+                        label5.Text = listView1.FocusedItem.Text;
+                    }
+                    catch (Exception ex)
+                    {
 
-
-
-
-                }
-                catch (Exception ex)
-                {
-
-                }
-                finally
-                {
-                    con.Close();
+                    }
+                    finally
+                    {
+                        con.Close();
+                    }
                 }
             }
 
@@ -503,21 +501,22 @@ namespace chess
             //    afisare(listView1.FocusedItem.Index + 1);
             //}
 
+            Queue<notifcation> coada = new Queue<notifcation>();
             if (items.Count != 0)
             {
-                Queue<notifcation> coada = new Queue<notifcation>();
                 if (con.State == ConnectionState.Closed)
                 {
                     con.Open();
                 }
-                foreach (var item in items)
+                try
                 {
-                    cmd = new SqlCommand("Select path,displayname from Folder where processname='" + item + "'", con);
-                    cmd.ExecuteNonQuery();
-                    SqlDataReader sdr = cmd.ExecuteReader();
-                    cmd.Dispose();
-                    try
+                    foreach (var item in items)
                     {
+
+                        cmd = new SqlCommand("Select path,displayname from Folder where processname='" + item + "'", con);
+                        cmd.ExecuteNonQuery();
+                        SqlDataReader sdr = cmd.ExecuteReader();
+                        cmd.Dispose();
                         if (Properties.Settings.Default.Notification == true && !NotifcationList.ContainsKey(item))
                         {
 
@@ -558,31 +557,24 @@ namespace chess
                             cmd.Dispose();
                         }
 
-
-                        //foreach (var app in lista)
-                        //{
-                        //    cmd = new SqlCommand("Update Today SET '" + DateTime.Now.Hour + "'=SUM((Select '" + DateTime.Now.Hour + "' from Today where AppName='" + app + "') + 1) where AppName='" + app + "'", con);
-                        //    cmd.ExecuteNonQuery();
-                        //    cmd.Dispose();
-                        //}
-
                         cmd = new SqlCommand("Update Folder SET Timeore='" + ore.ToString() + "', Timeminute='" + min.ToString() + "' where processname='" + item + "'", con);
                         cmd.ExecuteNonQuery();
                         cmd.Dispose();
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.ToString());
-                    }
-                    con.Close();
                 }
-                foreach (var item in coada)
+                catch (Exception ex)
                 {
-                    new th.Thread(() => { item.TopMost = true; item.TopLevel = true; item.ShowDialog(); }).Start();
+                    //  MessageBox.Show(ex.ToString());
                 }
+            }
+            con.Close();
+            foreach (var item in coada)
+            {
+                new th.Thread(() => { item.TopMost = true; item.TopLevel = true; item.ShowDialog(); }).Start();
             }
             listView1.Invalidate();
         }
+
 
         private void listView1_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
@@ -670,7 +662,11 @@ namespace chess
             try
             {
                 con.Open();
-                cmd = new SqlCommand("if not exists(Select 1 from DisplayTime where ziua='" + DateTime.Now.Date + "') begin Insert into Displaytime(ziua) values('" + DateTime.Now.Date + "') end else begin Select ore,minute from Displaytime  where ziua='" + DateTime.Now.Date + "' end", con);
+                DateTime dt = new DateTime();
+                //dt= DateTime.Parse(DateTime.Now.Date.ToString(),)
+                //dt = DateTime.ParseExact(DateTime.Now.Date.ToString(), "MM/DD/yyyy", CultureInfo.InvariantCulture);
+                //MessageBox.Show(dt.Date.ToString());
+                cmd = new SqlCommand("if not exists(Select 1 from DisplayTime where ziua='" + DateTime.Now.Date.ToString("MM/dd/yyyy") + "') begin Insert into Displaytime(ziua) values('" + DateTime.Now.Date.ToString("MM/dd/yyyy") + "') end else begin Select ore,minute from Displaytime  where ziua='" + DateTime.Now.Date.ToString("MM/dd/yyyy") + "' end", con);
                 cmd.ExecuteNonQuery();
                 SqlDataReader sdr = cmd.ExecuteReader();
                 if (sdr.Read())
@@ -679,7 +675,7 @@ namespace chess
                     minute_zilnice = (int)sdr[1];
                 }
                 cmd.Dispose();
-                cmd = new SqlCommand("if not exists(Select 1 from Today where ziua='" + DateTime.Now.Date + "') begin Select 0 end else begin Select 1 end", con);
+                cmd = new SqlCommand("if not exists(Select 1 from Today where ziua='" + DateTime.Now.Date.ToString("MM/dd/yyyy") + "') begin Select 0 end else begin Select 1 end", con);
                 int este = (int)cmd.ExecuteScalar();
                 cmd.ExecuteNonQuery();
                 cmd.Dispose();
@@ -688,7 +684,7 @@ namespace chess
                     foreach (var item in lista)
                     {
                         // cmd = new SqlCommand("Insert into Today(ziua,AppName,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23) values('" + DateTime.Now.Date + "','" + item + "',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)", con);
-                        cmd = new SqlCommand("Insert into Today(ziua,AppName) values('" + DateTime.Now.Date + "','" + item + "')", con);
+                        cmd = new SqlCommand("Insert into Today(ziua,AppName) values('" + DateTime.Now.Date.ToString("MM/dd/yyyy") + "','" + item + "')", con);
                         cmd.ExecuteNonQuery();
                         cmd.Dispose();
                     }
@@ -1216,7 +1212,7 @@ namespace chess
 
         }
 
-    
+
 
         /*-----------------------------------------------------------------------------------------*/
 

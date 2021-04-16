@@ -43,16 +43,25 @@ namespace chess
 
         private void BackgroundWorker_Tick(object sender, EventArgs e)
         {
-            if (con.State != ConnectionState.Open)
+            try
             {
-                con.Open();
+                if (con.State != ConnectionState.Open)
+                {
+                    con.OpenAsync();
+                }
+                else
+                {
+                    BackgroundWorker.Stop();
+                    this.Hide();
+                    Main.ShowDialog();
+                }
             }
-            else
+            catch (Exception)
             {
-                BackgroundWorker.Stop();
-                this.Hide();
-                Main.ShowDialog();
+
+                throw;
             }
+
         }
 
 
